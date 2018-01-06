@@ -1,0 +1,59 @@
+version: "3"
+services:
+  recommendations:
+    build: .
+    ports:
+      - 8087:8087
+    environment:
+      KUMULUZEE_CONFIG_ETCD_HOSTS: http://etcd:2379
+      KUMULUZEE_DISCOVERY_ETCD_HOSTS: http://etcd:2379
+      KUMULUZEE_SERVER_BASEURL: http://recommendations:8087
+    depends_on:
+      - etcd
+      - accommodations
+      - bookings
+
+  etcd:
+      image: elcolio/etcd:2.0.10
+      ports:
+        - 2379:2379
+        - 2380:2380
+        - 4001:4001
+        - 7001:7001
+  etcd-browser:
+    image: buddho/etcd-browser
+    ports:
+      - 8000:8000
+    environment:
+      ETCD_HOST: http://etcd
+      AUTH_PASS: doe
+    depends_on:
+      - etcd
+
+  consul:
+    image: consul
+    ports:
+      - 8400:8400
+      - 8500:8500
+      - 8600:8600
+
+  accommodations:
+    image: janerz6/accommodations:0.6
+    ports:
+      - 8081:8081
+    environment:
+      - CONFIG_SERVER_URL =http://consul:8500
+      - DISCOVERY_HOSTNAME =accommodations
+    depends_on:
+      - consul
+
+  bookings:
+    image: urosbajc/display-bookings:0.4
+    ports:
+      - 8080:8080
+    environment:
+      KUMULUZEE_CONFIG_ETCD_HOSTS: http://etcd:2379
+      KUMULUZEE_DISCOVERY_ETCD_HOSTS: http://etcd:2379
+      KUMULUZEE_SERVER_BASEURL: http://bookings:8080
+    depends_on:
+      - etcd

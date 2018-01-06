@@ -1,0 +1,60 @@
+kumuluzee:
+  name: recommendations
+  version: 1.0.0
+  env:
+    name: dev
+  server:
+    base-url: http://localhost:8087
+    http:
+      port: 8087
+  config:
+    start-retry-delay-ms: 500
+    max-retry-delay-ms: 900000
+    etcd:
+      hosts: http://192.168.99.100:2379
+  discovery:
+    ttl: 20
+    ping-interval: 15
+    etcd:
+      hosts: http://192.168.99.100:2379
+  health:
+    servlet:
+      mapping: /health
+      enabled: true
+    logs:
+      enabled: true
+      level: INFO
+      period-s: 30
+    checks:
+      disk-space-health-check:
+        threshold: 100000000
+  cors-filter:
+    servlet:
+      allow-origin: "*"
+  metrics:
+    web-instrumentation:
+      - name: metrics-endpoint
+        url-pattern: /metrics/*
+      - name: recommendations-endpoint
+        url-pattern: /v1/recommendations/*
+  logs:
+    config-file: '<?xml version="1.0" encoding="UTF-8"?>
+                  <Configuration name="recommendations">
+                      <Appenders>
+                          <Console name="console" target="SYSTEM_OUT">
+                              <PatternLayout pattern="%d %p %marker %m %X %ex %n"/>
+                          </Console>
+                      </Appenders>
+                      <Loggers>
+                          <Logger name="com.fri.rso.fririders.recommendations.logging" level="info" additivity="false">
+                            <AppenderRef ref="console"/>
+                          </Logger>
+                          <!-- Default logger -->
+                          <Root level="info">
+                            <AppenderRef ref="console"/>
+                          </Root>
+                      </Loggers>
+                  </Configuration>'
+
+recommendations-config:
+  healthy: true

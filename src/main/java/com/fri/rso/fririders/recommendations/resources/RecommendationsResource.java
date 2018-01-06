@@ -34,8 +34,8 @@ public class RecommendationsResource {
 
 
     @GET
-    @Path("/{messageId}")
-    public Response getUserRecommendations(@PathParam("messageId") int mId) {
+    @Path("/{userId}")
+    public Response getUserRecommendations(@PathParam("userId") int mId) {
         logger.info("REST CALL: getUserRecommendations.");
         return null;
     }

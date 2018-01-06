@@ -1,7 +1,4 @@
 package com.fri.rso.fririders.recommendations.resources;
-
-
-import com.fri.rso.fririders.recommendations.entities.Message;
 import com.fri.rso.fririders.recommendations.entities.User;
 import com.fri.rso.fririders.recommendations.services.RecommendationsBean;
 import com.kumuluz.ee.logs.LogManager;

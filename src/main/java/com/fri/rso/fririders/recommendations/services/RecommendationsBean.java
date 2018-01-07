@@ -5,6 +5,9 @@ import com.fri.rso.fririders.recommendations.entities.*;
 import com.kumuluz.ee.discovery.annotations.DiscoverService;
 import com.kumuluz.ee.logs.LogManager;
 import com.kumuluz.ee.logs.Logger;
+import org.eclipse.microprofile.faulttolerance.CircuitBreaker;
+import org.eclipse.microprofile.faulttolerance.Fallback;
+import org.eclipse.microprofile.faulttolerance.Timeout;
 
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
@@ -15,6 +18,7 @@ import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.core.GenericType;
 import javax.ws.rs.core.MediaType;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -41,19 +45,19 @@ public class RecommendationsBean {
     private String accommodationsUrl = "http://accommodations:8081/v1/accommodations";
 
 
+    @CircuitBreaker(requestVolumeThreshold = 2)
+    @Fallback(fallbackMethod = "getUserRecommendationsFallback")
+    @Timeout(value = 5, unit = ChronoUnit.SECONDS)
     public Recommendation getUserRecommendations(String userId) {
         if (this.usersUrl.isPresent() && this.bookingsUrl.isPresent()){
             try{
-                logger.info("Calling users service ...");
-                String usrBookingsUrl = this.usersUrl.get() + "/v1/users/" + userId + "/bookings";
+                logger.info("Calling bookings service ...");
+                String usrBookingsUrl = this.bookingsUrl.get() + "/v1/bookings/user/" + userId;
                 logger.info("URL: " + usrBookingsUrl);
-
-                String token = authBean.getAuthToken();
 
                 //get users bookings
                 List<Booking> bookings =
                         client.target(usrBookingsUrl)
-                                .property("authToken", token)
                                 .request(MediaType.APPLICATION_JSON)
                                 .get((new GenericType<List<Booking>>() {
                                 }));
@@ -114,5 +118,12 @@ public class RecommendationsBean {
             }
         }
         return null;
+    }
+
+
+    public Recommendation getUserRecommendationsFallback(String userId) {
+        logger.warn("getUserRecommendationsFallback called.");
+        Recommendation r = new Recommendation(0, "N/A", new ArrayList<>());
+        return r;
     }
 }

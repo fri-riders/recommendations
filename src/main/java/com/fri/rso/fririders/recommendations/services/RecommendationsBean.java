@@ -1,10 +1,7 @@
 package com.fri.rso.fririders.recommendations.services;
 
 
-import com.fri.rso.fririders.recommendations.entities.Accommodation;
-import com.fri.rso.fririders.recommendations.entities.Booking;
-import com.fri.rso.fririders.recommendations.entities.Recommendation;
-import com.fri.rso.fririders.recommendations.entities.User;
+import com.fri.rso.fririders.recommendations.entities.*;
 import com.kumuluz.ee.discovery.annotations.DiscoverService;
 import com.kumuluz.ee.logs.LogManager;
 import com.kumuluz.ee.logs.Logger;
@@ -19,6 +16,7 @@ import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.core.GenericType;
 import javax.ws.rs.core.MediaType;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Optional;
 
@@ -30,12 +28,15 @@ public class RecommendationsBean {
     private static Client client = ClientBuilder.newClient();
 
     @Inject
-    @DiscoverService(value="bookings", version = "1.0.x", environment = "dev")
+    @DiscoverService(value="display-bookings", version = "1.0.x", environment = "dev")
     private Optional<String> bookingsUrl;
 
     @Inject
     @DiscoverService(value="users", version = "1.0.x", environment = "dev")
     private Optional<String> usersUrl;
+
+    @Inject
+    private AuthBean authBean;
 
     private String accommodationsUrl = "http://accommodations:8081/v1/accommodations";
 
@@ -47,9 +48,12 @@ public class RecommendationsBean {
                 String usrBookingsUrl = this.usersUrl.get() + "/v1/users/" + userId + "/bookings";
                 logger.info("URL: " + usrBookingsUrl);
 
+                String token = authBean.getAuthToken();
+
                 //get users bookings
                 List<Booking> bookings =
                         client.target(usrBookingsUrl)
+                                .property("authToken", token)
                                 .request(MediaType.APPLICATION_JSON)
                                 .get((new GenericType<List<Booking>>() {
                                 }));
@@ -75,10 +79,10 @@ public class RecommendationsBean {
                     List<String> places = new ArrayList<>();
                     for (Booking b : bookings){
                         logger.info("Calling bookings service.");
-                        String bookingsUrl = this.bookingsUrl.get() + "/v1/bookings/" + b.getId() + "/accommodation";
+                        String bookingsAccUrl = this.bookingsUrl.get() + "/v1/bookings/" + b.getId() + "/accommodation";
                         logger.info("URL: " + bookingsUrl);
                         Accommodation a =
-                                client.target(accommodationsUrl)
+                                client.target(bookingsAccUrl)
                                         .request(MediaType.APPLICATION_JSON)
                                         .get((new GenericType<Accommodation>() {
                                         }));
@@ -111,5 +115,4 @@ public class RecommendationsBean {
         }
         return null;
     }
-
 }

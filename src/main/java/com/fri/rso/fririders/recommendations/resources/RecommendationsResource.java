@@ -1,4 +1,5 @@
 package com.fri.rso.fririders.recommendations.resources;
+import com.fri.rso.fririders.recommendations.entities.Recommendation;
 import com.fri.rso.fririders.recommendations.entities.User;
 import com.fri.rso.fririders.recommendations.services.RecommendationsBean;
 import com.kumuluz.ee.logs.LogManager;
@@ -22,18 +23,11 @@ public class RecommendationsResource {
     @Inject
     private RecommendationsBean recommendationsBean;
 
-
-    @GET
-    public Response getAllRecommendations() {
-        logger.info("REST CALL: getAllRecommendations");
-        return null;
-    }
-
-
     @GET
     @Path("/{userId}")
-    public Response getUserRecommendations(@PathParam("userId") int mId) {
+    public Response getUserRecommendations(@PathParam("userId") String uId) {
         logger.info("REST CALL: getUserRecommendations.");
-        return null;
+        Recommendation r = recommendationsBean.getUserRecommendations(uId);
+        return Response.ok(r).build();
     }
 }

@@ -38,7 +38,7 @@ services:
       - 8600:8600
 
   accommodations:
-    image: janerz6/accommodations:0.6
+    image: janerz6/accommodations:0.7.1
     ports:
       - 8081:8081
     environment:
@@ -48,7 +48,7 @@ services:
       - consul
 
   bookings:
-    image: urosbajc/display-bookings:0.6
+    image: urosbajc/display-bookings:0.6.1
     ports:
       - 8080:8080
     environment:
@@ -59,7 +59,7 @@ services:
       - etcd
 
   users:
-    image: tomisebjanic/rso-users:1.0.1
+    image: tomisebjanic/rso-users:1.0.4
     ports:
       - 8082:8082
     environment:

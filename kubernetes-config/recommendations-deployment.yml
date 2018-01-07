@@ -33,4 +33,4 @@ spec:
           protocol: TCP
         resources:
           requests:
-            cpu: 250m
+            cpu: 200m

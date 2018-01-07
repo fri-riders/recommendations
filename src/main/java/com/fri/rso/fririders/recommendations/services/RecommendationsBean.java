@@ -90,7 +90,8 @@ public class RecommendationsBean {
                                         .request(MediaType.APPLICATION_JSON)
                                         .get((new GenericType<Accommodation>() {
                                         }));
-                        places.add(a.getLocation());
+                        if(!places.contains(a.getLocation()))
+                            places.add(a.getLocation());
                     }
 
                     //based on previous bookings recommend accommodations

@@ -1,5 +1,5 @@
 # Recommendations
-`Last version: 0.1`
+`Last version: 0.2`
 ## Docker compose
 - Build app: mvn clean package
 - Run: docker-compose up --build

@@ -36,10 +36,6 @@ public class RecommendationsBean {
     private Optional<String> bookingsUrl;
 
     @Inject
-    @DiscoverService(value="users", version = "1.0.x", environment = "dev")
-    private Optional<String> usersUrl;
-
-    @Inject
     private AuthBean authBean;
 
     private String accommodationsUrl = "http://accommodations:8081/v1/accommodations";
@@ -49,7 +45,7 @@ public class RecommendationsBean {
     @Fallback(fallbackMethod = "getUserRecommendationsFallback")
     @Timeout(value = 5, unit = ChronoUnit.SECONDS)
     public Recommendation getUserRecommendations(String userId) {
-        if (this.usersUrl.isPresent() && this.bookingsUrl.isPresent()){
+        if (this.bookingsUrl.isPresent()){
             try{
                 logger.info("Calling bookings service ...");
                 String usrBookingsUrl = this.bookingsUrl.get() + "/v1/bookings/user/" + userId;

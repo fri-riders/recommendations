@@ -10,7 +10,7 @@ spec:
         app: recommendations
     spec:
       containers:
-      - image: urosbajc/recommendations:0.1
+      - image: urosbajc/recommendations:0.2
         name: messaging
         env:
           - name: KUMULUZEE_DISCOVERY_CLUSTER

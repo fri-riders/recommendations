@@ -7,7 +7,7 @@
 ## Endpoints
 App is accessible on port 8086.
 
-###Feedbacks
+### Recommendation
 * `GET: /v1/recommendations/{userId}` Returns recommended accommodations for user with userId
 
 ### Config
